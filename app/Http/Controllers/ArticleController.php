@@ -4,6 +4,9 @@ namespace App\Http\Controllers;
 
 use App\Article;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Facades\File;
+
 
 class ArticleController extends Controller
 {
@@ -35,11 +38,21 @@ class ArticleController extends Controller
             'title'=>'required|string',
             'description'=> 'required|string',
         ]);
+
+        $image = $request->file('imagearticle');
+        $extension = $image->getClientOriginalExtension();
+        Storage::disk('public')->put($image->getFilename().'.'.$extension,  File::get($image));
+
         $article = new Article([
             'title' => $request->get('title'),
-            'description'=> $request->get('description'),
+            'description' => $request->get('description'),
         ]);
+
+        $article->mime = $image->getClientMimeType();
+        $article->original_filename = $image->getClientOriginalName();
+        $article->filename = $image->getFilename().'.'.$extension;
         $article->save();
+        
         return redirect('/articles')->with('success', 'L\'article a bien été ajouté');
     }
 
@@ -49,7 +62,9 @@ class ArticleController extends Controller
      */
     public function show($id)
     {
-        //
+        $article = Article::find($id);
+
+        return view('articles.show', compact('article'));
     }
 
     /**

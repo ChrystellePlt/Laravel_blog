@@ -25,7 +25,7 @@
             @foreach($articles as $article)
                 <tr>
                     <td>{{$article->id}}</td>
-                    <td>{{$article->title}}</td>
+                    <td><a href="{{ route('articles.show',$article->id)}}">{{$article->title}}</a></td>
                     <td>{{$article->description}}</td>
                     <td><a href="{{ route('articles.edit',$article->id)}}" class="btn btn-primary">Modifier</a></td>
                     <td>
